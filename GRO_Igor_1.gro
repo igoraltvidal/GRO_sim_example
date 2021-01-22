@@ -1,0 +1,129 @@
+include gro
+
+set ( "dt", 0.1 );
+FILE := fopen ( "./data.txt", "w" ); // extract the data to plot later
+
+tr := 6;	// refraction period
+se := 100;	// signal emit magnitude
+
+ahl_g1 := signal (1,1); // Signal for group1
+ahl_g2 := signal (1,1); // Signal for group2
+ahl_g3 := signal (1,1); // Signal for group3
+ahl_g4 := signal (1,1); // Signal for group4
+
+size_g1 := 1;
+size_g2 := 1;
+size_g3 := 1;
+size_g4 := 1;
+
+program group1(tr) := { 
+
+  rfp := 0;
+  r := [ t := tr ];
+
+  rate(0.1) : { // randomly start a wave
+   emit_signal ( ahl_g1 , se )
+  }
+
+  rate(0.001) : {
+   fprint (FILE , "group1 ", r.t, " " , size_g1,   "\n" )
+  }
+
+  daughter: {size_g1 := size_g1  + 1}
+
+  true : { // for timing purposes
+    rfp := rfp + 1,
+    //print ( id, "\n" ),
+    r.t := r.t + dt
+  }
+
+  get_signal ( ahl_g2 ) > 0.01 | get_signal ( ahl_g3 ) > 0.01 | get_signal ( ahl_g4 ) > 0.01 : {
+      size_g1 := size_g1 - 1,
+      die()
+  }
+};
+
+program group2(tr) := { 
+
+  gfp := 0;
+  r := [ t := tr ];
+
+  rate(0.1) : { // randomly start a wave
+    emit_signal ( ahl_g2, se )
+  }
+
+  rate(0.001) : {
+   fprint (FILE , "group2 ", r.t, " " , size_g2,   "\n" )
+  }
+
+  daughter : {size_g2 := size_g2  + 1}
+
+  true : { // for timing purposes
+    r.t := r.t + dt,
+    gfp := gfp + 1
+  }
+
+  get_signal ( ahl_g1 ) > 0.01 | get_signal ( ahl_g3 ) > 0.01 | get_signal ( ahl_g4 ) > 0.01 : {
+      size_g2 := size_g2 - 1,
+      die()
+  }
+};
+
+program group3(tr) := { 
+
+  cfp := 0;
+  r := [ t := tr ];
+
+  rate(0.1) : { // randomly start a wave
+    emit_signal ( ahl_g3, se )
+  }
+
+  rate(0.001) : {
+   fprint (FILE , "group3 ", r.t, " " , size_g3,   "\n" )
+  }
+
+  daughter : {size_g3 := size_g3  + 1}
+
+  true : { // for timing purposes
+    r.t := r.t + dt,
+    cfp := cfp + 1
+  }
+
+  get_signal ( ahl_g1 ) > 0.01 | get_signal ( ahl_g2 ) > 0.01 | get_signal ( ahl_g4 ) > 0.01 : {
+      size_g3 := size_g3 - 1,
+      die()
+  }
+};
+
+program group4(tr) := { 
+
+  yfp := 0;
+  r := [ t := tr ];
+
+  rate(0.1) : { // randomly start a wave
+    emit_signal ( ahl_g4, se )
+  }
+
+  rate(0.001) : {
+   fprint (FILE , "group4 ", r.t, " " , size_g4,   "\n" )
+  }
+
+  daughter : {size_g4 := size_g4  + 1}
+
+  true : { // for timing purposes
+    r.t := r.t + dt,
+    yfp := yfp + 1
+  }
+
+  get_signal ( ahl_g1 ) > 0.01 | get_signal ( ahl_g2 ) > 0.01 | get_signal ( ahl_g3 ) > 0.01 : {
+	size_g4 := size_g4 - 1,
+       die()
+  }
+};
+
+
+// associate the program with a cell
+ecoli ( [ x:= -50, y:= -50 ], program group1(tr) );
+ecoli ( [ x:= 50, y:= 50 ], program group2(tr) );
+ecoli ( [ x:= -50, y:= 50 ], program group3(tr) );
+ecoli ( [ x:= 50, y:= -50 ], program group4(tr) );
