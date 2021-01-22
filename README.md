@@ -10,9 +10,11 @@ The simulations has the goal to solve 3 different types of problems:
 
 The first simulation has the intention to create microcolonies with a small distance between each other. The 2º and 3º simulation are a improvement of the first simulation.
 It was used the LIA-GRO version of the simulator [https://github.com/liaupm/GRO-LIA] to run the files. A python script is attached here to plot the data from the simulations.
-Bellow we can see an example of the simulation and the plot results. 
 
-![](https://github.com/igoraltvidal/GRO_sim_example/blob/main/sim.gif)
+## Example
 
-![](https://github.com/igoraltvidal/GRO_sim_example/blob/main/plotCells.PNG)
+Bellow we can see an example of the simulation of the "Creating groups with similar number of cells" problem and the plot results. 
 
+<img src="https://github.com/igoraltvidal/GRO_sim_example/blob/main/sim.gif" width=450 align=left>
+
+<img src="https://github.com/igoraltvidal/GRO_sim_example/blob/main/plotCells.PNG" width=450 align=left>
